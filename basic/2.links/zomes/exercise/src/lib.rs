@@ -25,7 +25,12 @@ pub struct CreatePostInput {
 
 #[hdk_extern]
 pub fn create_post(external_data: CreatePostInput) -> ExternResult<EntryHash> {
-    unimplemented!()
+    let post : Post = Post (external_data.content);
+    let _header_hash = create_entry(&post)?;
+    let entry_hash = hash_entry(post)?;
+    let agent_pubkey = agent_info()?.agent_latest_pubkey.into();
+    create_link(agent_pubkey, entry_hash.clone(), ())?;
+    Ok(entry_hash)
 }
 
 //  4. get_posts_for_agent()
@@ -34,5 +39,16 @@ pub fn create_post(external_data: CreatePostInput) -> ExternResult<EntryHash> {
 
 #[hdk_extern]
 pub fn get_posts_for_agent(agent_pubkey: AgentPubKey) -> ExternResult<Vec<Post>> {
-    unimplemented!()
+    let mut content: Vec<Post> = Vec::new();
+
+    let links: Links = get_links(agent_pubkey.into(), None)?;
+
+    for l in links.into_inner() {
+        let element: Element = get(l.target.clone(), GetOptions::default())?
+        .ok_or(WasmError::Guest(String::from("Couldn't find post")))?;
+        let post_option: Option<Post> = element.entry().to_app_option()?;
+        content.push(post_option.unwrap());
+    }
+
+    Ok(content)
 }

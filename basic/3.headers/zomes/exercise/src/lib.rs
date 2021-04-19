@@ -16,20 +16,35 @@ pub struct HeaderAndEntryHash{
 
 #[hdk_extern]
 pub fn register_snacking(input: SnackingLog) -> ExternResult<HeaderAndEntryHash> {
-    unimplemented!()
+    let header_hash = create_entry(&input)?;
+    let entry_hash = hash_entry(input)?;
+    let ret : HeaderAndEntryHash = HeaderAndEntryHash { entry_hash: entry_hash.into(), header_hash: header_hash.into() };
+    Ok(ret)
 }
 
 #[hdk_extern]
 pub fn get_by_header_hash(hash: HeaderHashB64) -> ExternResult<SnackingLog> {
-    unimplemented!()
+    let element: Element = get(HeaderHash::from(hash), GetOptions::default())?
+        .ok_or(WasmError::Guest(String::from("Couldn't find snackage")))?;
+    let snack_option: Option<SnackingLog> = element.entry().to_app_option()?;
+    let snack: SnackingLog = snack_option.unwrap();
+    Ok(snack)
 }
 
 #[hdk_extern]
 pub fn get_by_entry_hash(hash: EntryHashB64) -> ExternResult<SnackingLog> {
-    unimplemented!()
+    let element: Element = get(EntryHash::from(hash), GetOptions::default())?
+        .ok_or(WasmError::Guest(String::from("Couldn't find snackage")))?;
+    let snack_option: Option<SnackingLog> = element.entry().to_app_option()?;
+    let snack: SnackingLog = snack_option.unwrap();
+    Ok(snack)
 }
 
 #[hdk_extern]
 pub fn get_header_hash_by_content(input: SnackingLog) -> ExternResult<HeaderHashB64> {
-    unimplemented!()
+    let entry_hash: EntryHash = hash_entry(&input)?;
+    let element: Element = get(entry_hash, GetOptions::default())?
+        .ok_or(WasmError::Guest(String::from("Couldn't find snackage")))?;
+    let header_hash: HeaderHash = element.header_address().clone();
+    Ok(HeaderHashB64::from(header_hash))
 }

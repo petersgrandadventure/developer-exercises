@@ -5,20 +5,20 @@ mod tests;
 
 // Returns the header hash from the element
 pub fn get_header_hash(_element: Element) -> HeaderHash {
-    unimplemented!()
+    Ok(_element.header_address().clone())
 }
 
-// Returns the header timestamp from the element
-pub fn get_header_timestamp(_element: Element) -> timestamp::Timestamp {
-    unimplemented!()
-}
+// // Returns the header timestamp from the element
+// pub fn get_header_timestamp(_element: Element) -> timestamp::Timestamp {
+//     unimplemented!()
+// }
 
-// Returns whether the element contains some entry or not
-pub fn contains_entry(_element: Element) -> bool {
-    unimplemented!()
-}
+// // Returns whether the element contains some entry or not
+// pub fn contains_entry(_element: Element) -> bool {
+//     unimplemented!()
+// }
 
-// Returns whether the header has been produced by the subconscious of holochain or if it was some hdk call
-pub fn is_header_subconscious(_header: Header) -> bool {
-    unimplemented!()
-}
+// // Returns whether the header has been produced by the subconscious of holochain or if it was some hdk call
+// pub fn is_header_subconscious(_header: Header) -> bool {
+//     unimplemented!()
+// }
